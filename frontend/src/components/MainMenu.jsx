@@ -15,36 +15,6 @@ const MainMenu = () => {
             Home
           </NavLink>
         </li>
-        <li>
-          <NavLink
-            to="/about"
-            className={({ isActive }) =>
-              `text-white hover:text-gray-300 ${isActive ? "font-bold" : ""}`
-            }
-          >
-            About
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/blog"
-            className={({ isActive }) =>
-              `text-white hover:text-gray-300 ${isActive ? "font-bold" : ""}`
-            }
-          >
-            Blog
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/newsletter"
-            className={({ isActive }) =>
-              `text-white hover:text-gray-300 ${isActive ? "font-bold" : ""}`
-            }
-          >
-            Newsletter
-          </NavLink>
-        </li>
       </ul>
     </nav>
   )

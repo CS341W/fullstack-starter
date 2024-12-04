@@ -5,8 +5,8 @@ import cookieParser from "cookie-parser"
 import csrf from "csurf"
 import cors from "cors"
 import dotenv from "dotenv"
-import sgMail from "@sendgrid/mail"
 import { database } from "./persistent-database.js" // or use "./in-memory-database.js"
+import path from "path"
 
 const router = express.Router() // Create a router
 
@@ -16,6 +16,7 @@ const router = express.Router() // Create a router
 
 // Public files, form data, JSON, CSRF protection, and CORS
 router.use(express.static("public"))
+router.use(express.static("uploads"))
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(express.json())
 router.use(cookieParser())
@@ -30,9 +31,8 @@ router.use(
 // Configure for multi-part, form-based file uploads
 const upload = multer({ dest: "uploads/" })
 
-// configs for sendgrid and credentials
+// configure for handling credentials stored in .env
 dotenv.config()
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 /**
  * Route Definitions
@@ -68,9 +68,16 @@ router.post(
   csrfProtection,
   async (req, res) => {
     console.log(req.body)
+    let fileName = null
+    if (req.file) {
+      const ext = path.extname(req.file.originalname)
+      fileName = `${req.file.filename}${ext}`
+      const fs = await import("fs/promises")
+      await fs.rename(req.file.path, path.join(req.file.destination, fileName))
+    }
     const subscriberData = {
       ...req.body,
-      file: req.file ? req.file.filename : null,
+      portrait_img: fileName,
     }
     try {
       await database.addSubscriber(subscriberData)
@@ -92,6 +99,7 @@ router.post("/subscribers/delete/:id", async (req, res) => {
     res.status(500).send("Internal Server Error")
   }
 })
+
 // Favorite subscriber route
 router.post("/subscribers/favorite/:id", async (req, res) => {
   try {
@@ -103,57 +111,9 @@ router.post("/subscribers/favorite/:id", async (req, res) => {
   }
 })
 
-// Newsletter signup form route
-router.get("/newsletter", csrfProtection, (req, res) => {
-  const csrfToken = req.csrfToken()
-  res.render("newsletter", { csrfToken })
-})
-
-// Newsletter signup API
-router.post("/api/newsletter-signup", csrfProtection, async (req, res) => {
-  const { email } = req.body
-  const msg = {
-    to: email,
-    from: "mmontoya@masters.edu", // Replace with your verified SendGrid sender email
-    subject: "Thanks for subscribing!",
-    text: "Thank you for signing up for our newsletter!",
-    html: "<strong>Thank you for signing up for our newsletter!</strong>",
-  }
-  try {
-    await sgMail.send(msg)
-    res.render("newsletter", { message: "Subscription successful!" })
-  } catch (error) {
-    console.error(error)
-    res.render("newsletter", {
-      message: "Error subscribing. Please try again.",
-    })
-  }
-})
-
 // Route for CSRF token (when needed)
 router.get("/csrf-token", csrfProtection, (req, res) => {
   res.json({ csrfToken: req.csrfToken() })
-})
-
-// Route for API newsletter signup
-router.post("/api/journal-signup", async (req, res) => {
-  const { email } = req.body
-  const msg = {
-    to: email,
-    from: "mmontoya@masters.edu", // Replace with your verified SendGrid sender email
-    subject: "Thanks for subscribing!",
-    text: "Thank you for signing up for our newsletter!",
-    html: "<strong>Thank you for signing up for our newsletter!</strong>",
-  }
-  try {
-    await sgMail.send(msg)
-    res.send({ message: "Subscription successful!" })
-  } catch (error) {
-    console.error(error)
-    res.send({
-      message: "Error subscribing. Please try again. " + error,
-    })
-  }
 })
 
 export default router

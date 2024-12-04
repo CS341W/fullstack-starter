@@ -3,8 +3,13 @@
   {{#each subscribers}}
     <div class="subscriber">
       <h2>{{this.fname}} {{this.lname}}</h2>
-      <p>Sex: {{this.sex}}</p>
-
+      {{#if this.portrait_img}}
+        <img
+          style="max-width:200px"
+          src="{{this.portrait_img}}"
+          alt="{{this.fname}} {{this.lname}}"
+        />
+      {{/if}}
       <form method="post" action="/subscribers/favorite/{{this.id}}">
         {{#if this.isFavorite}}
           <p>Favorite: Yes</p>
@@ -13,8 +18,8 @@
         {{/if}}
         <button type="submit">Toggle Favorite</button>
       </form>
-
       <form method="post" action="/subscribers/delete/{{this.id}}">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}" />
         <button type="submit">Delete</button>
       </form>
     </div>
