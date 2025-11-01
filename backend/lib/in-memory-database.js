@@ -1,47 +1,44 @@
 import { nanoid } from "nanoid"
-const subscribers = [
+const users = [
   {
-    id: "b1245",
-    fname: "Pierce",
-    lname: "Brosnan",
-    sex: "Male",
+    _csrf: "sSNAzhZh-csARwTjj10u8ghEOpgqkTZdOW64",
+    fname: "Mark",
+    lname: "Montoya",
+    portrait_img: "fc730c501970ba38832ca14974c76357.jpg",
+    id: "JEbxp",
+    isFavorite: false,
   },
   {
-    id: "c5431",
-    fname: "Jennifer",
-    lname: "Garner",
-    sex: "Female",
-  },
-  {
-    id: "d6790",
-    fname: "Harrison",
-    lname: "Ford",
-    sex: "Male",
+    _csrf: "yglP5OtG-Xar1Ts-VHum9XcINBiw0bKVJTlY",
+    fname: "Lily Jo",
+    lname: "Canine",
+    portrait_img: "7c8792a753fc06f10e3daf68eab0a8be.jpeg",
+    id: "eixJM",
   },
 ]
 
-async function getSubscribers() {
-  return subscribers
+async function getUsers() {
+  return users
 }
 
-async function addSubscriber(subscriber) {
-  subscriber.id = nanoid(5)
-  subscribers.push(subscriber)
+async function addUser(user) {
+  user.id = nanoid(5)
+  users.push(user)
 }
 
-async function removeSubscriber(id) {
-  const index = subscribers.findIndex((subscriber) => subscriber.id === id)
-  subscribers.splice(index, 1)
+async function removeUser(id) {
+  const index = users.findIndex((user) => user.id === id)
+  users.splice(index, 1)
 }
 
-async function favoriteSubscriber(id) {
-  const index = subscribers.findIndex((subscriber) => subscriber.id === id)
-  subscribers[index].isFavorite = !subscribers[index].isFavorite
+async function favoriteUser(id) {
+  const index = users.findIndex((user) => user.id === id)
+  users[index].isFavorite = !users[index].isFavorite
 }
 
 export const database = {
-  getSubscribers,
-  addSubscriber,
-  removeSubscriber,
-  favoriteSubscriber,
+  getUsers,
+  addUser,
+  removeUser,
+  favoriteUser,
 }

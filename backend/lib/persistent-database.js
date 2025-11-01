@@ -2,24 +2,21 @@ import { JSONFilePreset } from "lowdb/node"
 import { nanoid } from "nanoid"
 
 const initialData = {
-  subscribers: [
+  users: [
     {
-      id: "b1245",
-      fname: "Pierce",
-      lname: "Brosnan",
-      sex: "Male",
+      _csrf: "sSNAzhZh-csARwTjj10u8ghEOpgqkTZdOW64",
+      fname: "Mark",
+      lname: "Montoya",
+      portrait_img: "fc730c501970ba38832ca14974c76357.jpg",
+      id: "JEbxp",
+      isFavorite: false,
     },
     {
-      id: "c5431",
-      fname: "Jennifer",
-      lname: "Garner",
-      sex: "Female",
-    },
-    {
-      id: "d6790",
-      fname: "Harrison",
-      lname: "Ford",
-      sex: "Male",
+      _csrf: "yglP5OtG-Xar1Ts-VHum9XcINBiw0bKVJTlY",
+      fname: "Lily Jo",
+      lname: "Canine",
+      portrait_img: "7c8792a753fc06f10e3daf68eab0a8be.jpeg",
+      id: "eixJM",
     },
   ],
 }
@@ -27,36 +24,32 @@ const initialData = {
 // Initialize the database
 let db = await JSONFilePreset("db.json", initialData)
 
-async function getSubscribers() {
+async function getUsers() {
   await db.read()
-  return db.data.subscribers
+  return db.data.users
 }
 
-async function addSubscriber(subscriber) {
-  subscriber.id = nanoid(5)
-  db.data.subscribers.push(subscriber)
+async function addUser(user) {
+  user.id = nanoid(5)
+  db.data.users.push(user)
   await db.write()
 }
 
-async function removeSubscriber(id) {
-  const index = db.data.subscribers.findIndex(
-    (subscriber) => subscriber.id === id
-  )
-  db.data.subscribers.splice(index, 1)
+async function removeUser(id) {
+  const index = db.data.users.findIndex((user) => user.id === id)
+  db.data.users.splice(index, 1)
   await db.write()
 }
 
-async function favoriteSubscriber(id) {
-  const index = db.data.subscribers.findIndex(
-    (subscriber) => subscriber.id === id
-  )
-  db.data.subscribers[index].isFavorite = !db.data.subscribers[index].isFavorite
+async function favoriteUser(id) {
+  const index = db.data.users.findIndex((user) => user.id === id)
+  db.data.users[index].isFavorite = !db.data.users[index].isFavorite
   await db.write()
 }
 
 export const database = {
-  getSubscribers,
-  addSubscriber,
-  removeSubscriber,
-  favoriteSubscriber,
+  getUsers,
+  addUser,
+  removeUser,
+  favoriteUser,
 }
